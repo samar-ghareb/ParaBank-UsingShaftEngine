@@ -1,0 +1,184 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.example</groupId>
+  <artifactId>TestEngine</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>TestEngine</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <shaft_engine.version>9.1.20250313</shaft_engine.version>
+    <aspectjweaver.version>1.9.23</aspectjweaver.version>
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <surefire-testng.version>3.5.3</surefire-testng.version>
+    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+    <junit-jupiter-engine.version>5.12.1</junit-jupiter-engine.version>
+  </properties>
+
+  <dependencies>
+    <!-- SHAFT Engine -->
+    <dependency>
+      <groupId>io.github.shafthq</groupId>
+      <artifactId>SHAFT_ENGINE</artifactId>
+      <version>${shaft_engine.version}</version>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>github-shaft</id>
+      <url>https://maven.pkg.github.com/ShaftHQ/SHAFT_ENGINE</url>
+    </repository>
+    <repository>
+      <id>central</id>
+      <name>Maven Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>24</source>
+          <target>24</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin.version}</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- TestNG Profile -->
+    <profile>
+      <id>testng</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectjweaver.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.apache.maven.surefire</groupId>
+                <artifactId>surefire-testng</artifactId>
+                <version>${surefire-testng.version}</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <argLine>
+                -javaagent:${user.home}/.m2/repository/org/aspectj/aspectjweaver/${aspectjweaver.version}/aspectjweaver-${aspectjweaver.version}.jar
+              </argLine>
+              <properties>
+                <property>
+                  <name>usedefaultlisteners</name>
+                  <value>false</value>
+                </property>
+                <property>
+                  <name>listener</name>
+                  <value>com.shaft.listeners.TestNGListener</value>
+                </property>
+              </properties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- JUnit Profile -->
+    <profile>
+      <id>junit</id>
+      <activation>
+        <file>
+          <missing>src/test/resources/META-INF/services/org.testng.ITestNGListener</missing>
+          <exists>src/test/resources/META-INF/services/org.junit.platform.launcher.LauncherSessionListener</exists>
+        </file>
+      </activation>
+
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit</groupId>
+            <artifactId>junit-bom</artifactId>
+            <version>5.12.1</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectjweaver.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter-engine.version}</version>
+                <scope>test</scope>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <argLine>
+                -javaagent:${user.home}/.m2/repository/org/aspectj/aspectjweaver/${aspectjweaver.version}/aspectjweaver-${aspectjweaver.version}.jar
+              </argLine>
+              <properties>
+                <property>
+                  <name>usedefaultlisteners</name>
+                  <value>false</value>
+                </property>
+                <property>
+                  <name>listener</name>
+                  <value>com.shaft.listeners.JunitListener</value>
+                </property>
+              </properties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
