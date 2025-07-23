@@ -23,7 +23,6 @@
   </properties>
 
   <dependencies>
-    <!-- SHAFT Engine -->
     <dependency>
       <groupId>io.github.shafthq</groupId>
       <artifactId>SHAFT_ENGINE</artifactId>
