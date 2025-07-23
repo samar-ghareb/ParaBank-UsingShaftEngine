@@ -48,7 +48,8 @@ public class FindTransactionsTest {
         driver.element().type(findByTransactionID, "12345");
         driver.element().click(findTransactions);
 
-        driver.element().type(findByDate, "05-05-2024"); 
+        driver.element().type(findByDate, "05-05-2024");
+        wait.until(ExpectedConditions.elementToBeClickable(findtransactions));
         driver.element().click(findtransactions);
 
         driver.element().type(fromDateField, "01-01-2023");
