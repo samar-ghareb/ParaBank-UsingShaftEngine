@@ -27,7 +27,7 @@ public class RequestLoanTest {
         driver.element().click(requestLoanLink);
         driver.element().type(LoanAmountField, "100");
         driver.element().type(downPaymentField, "50");
-        driver.element().select(fromaccount,"15231");
+        driver.element().select(fromaccount,"13344");
         driver.element().click(applyNowButton);
         driver.quit();
 
